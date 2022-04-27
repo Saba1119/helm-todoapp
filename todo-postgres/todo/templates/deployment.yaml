@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: {{.Values.metadata.name}}
+  namespace: {{.Values.metadata.namespace}}
+  labels: 
+    app: todo
+
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: todo
+
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      containers:
+      - name: todo
+        image: saba1119/todo:v3
+        imagePullPolicy: IfNotPresent
+      
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.configmap.metadata.name}}
+              key: db-host
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.configmap.metadata.name}}
+              key: db-port
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{.Values.configmap.metadata.name}}
+              key: db-name
+
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{.Values.secret.metadata.name}}
+              key: db-user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{.Values.secret.metadata.name}}
+              key: db-password      
+
+        resources:
+          limits:
+            cpu: 500m
+            memory: 150Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: {{.Values.container.port}}
+
+        # livenessProbe:
+        #   failureThreshold: 2
+        #   httpGet:
+        #     path: /task
+        #     port: 8080
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 30
+        #   successThreshold: 1
+        #   timeoutSeconds: 30   
+
+        # readinessProbe:
+        #   failureThreshold: 2
+        #   httpGet:
+        #     path: /task
+        #     port: 8080
+        #   initialDelaySeconds: 10
+        #   periodSeconds: 30
+        #   successThreshold: 1
+        #   timeoutSeconds: 30
+
+        volumeMounts:
+        - name: {{.Values.volume.name}}
+          mountPath: "/data"
+          readOnly: true   
+      volumes:  
+        - name: {{.Values.volume.name}}
+          secret: 
+            secretName: {{.Values.secret.metadata.name}}
+      # imagePullSecrets:
+      #   - name: {{.Values.dockerSecret}}

@@ -1,0 +1,28 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.metadata.name}}
+  namespace: {{.Values.metadata.namespace}}
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: {{.Values.metadata.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.metadata.name}}
+    spec:
+      containers:
+      - name: {{.Values.container.name}}
+        image: {{.Values.image.repository}}
+        imagePullPolicy: {{.Values.image.pullPolicy}}
+        ports:
+        - containerPort: {{.Values.container.port}}
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{.Values.secret.metadata.name}}
+              key: db-password

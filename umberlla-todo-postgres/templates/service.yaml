@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.service.metadata.name}}
+  namespace: {{.Values.metadata.namespace}}
+spec:
+  selector:
+    app: todo
+  type: {{.Values.service.type}}
+  ports:
+  - name: {{.Values.service.name}}
+    port: {{.Values.service.port}}
+    protocol: {{.Values.service.protocol}}
+    targetPort: {{.Values.service.targetPort}}

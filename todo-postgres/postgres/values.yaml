@@ -1,0 +1,38 @@
+metadata:
+  name: postgress 
+  namespace: todo
+
+replicaCount: 1
+
+image:
+  repository: postgres:latest
+  pullPolicy: IfNotPresent
+
+container:
+  name: postgres
+  port: 5432
+  
+secret:
+  metadata:
+    name: postgres-secrets
+  type: Opaque
+  data:
+    dbuser: cG9zdGdyZXM=
+    dbpassword: MTIzNA==
+
+service:
+  metadata:
+    name: postgres-services
+  type: NodePort
+  name: http
+  port: 5432
+  protocol: TCP
+  targetPort: 5432
+
+
+
+
+
+
+
+  

@@ -1,0 +1,11 @@
+apiVersion: v1 
+kind: ConfigMap
+metadata:
+  name: {{.Values.configmap.metadata.name}}
+  namespace: {{.Values.metadata.namespace}}
+  labels:
+    app: todo
+data:
+  db-host: {{.Values.configmap.data.dbhost}}
+  db-port: "${{.Values.configmap.data.dbport}}"
+  db-name: {{.Values.configmap.data.dbname}}

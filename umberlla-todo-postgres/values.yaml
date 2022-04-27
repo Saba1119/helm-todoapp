@@ -1,0 +1,52 @@
+metadata:
+  name: todoapp
+  namespace: todo
+global:
+  replicaCount: 1
+
+container:
+  name: todo
+  port: 8080
+
+image:
+  repository: vdocker0123/todo:HPA01
+volume:
+ name: todovolume
+
+configmap:
+ metadata: 
+  name: todo-configmap
+ data:
+    dbhost: postgres-service
+    dbport: 5432
+    dbname: postgres
+
+secret:
+  metadata:
+    name: todo-secret
+  type: Opaque
+  data:
+    dbuser: cG9zdGdyZXM=
+    dbpassword: MTIzNDU2
+
+service:
+  metadata:
+    name: todo-service
+  type: NodePort
+  name: http
+  port: 80
+  protocol: TCP
+  targetPort: 8080
+
+ingress:
+  metadata:
+    name: todo-ingress
+
+hpa:
+  metadata:
+    name:  todo-hpa
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+#dockerSecret: docregcred
